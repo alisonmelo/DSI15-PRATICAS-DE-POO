@@ -39,7 +39,7 @@ class Moto extends Veiculo {
 
 // 3. POR FIM, CRIE A CLASSE PRINCIPAL PARA TESTAR
 // Fale: "Vamos instanciar nossa Moto e ver a herança funcionando na prática."
-public class dsd {
+public class Main {
     public static void main(String[] args) {
         
         System.out.println("--- SISTEMA DE VEÍCULOS ---");
