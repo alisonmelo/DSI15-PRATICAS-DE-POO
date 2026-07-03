@@ -169,7 +169,7 @@ switch (opcao) {
 
         double total = calc.calcular(funcionario);
         relatorio.gerarRelatorio(funcionario, total);
-
+gi
         leitor.close();
     }
 }
