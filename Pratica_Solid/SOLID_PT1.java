@@ -43,6 +43,60 @@ class Designer implements Remuneravel {
     }
 }
 
+class Inspetor implements Remuneravel {
+    private double base;
+
+    public Inspetor(double base) {
+        this.base = base;
+    }
+
+    @Override
+    public double calcularSalario() {
+        return base * 1.1;
+    }
+
+    @Override
+    public String getCargo() {
+        return "Inspetor";
+    }
+}
+
+class Programador implements Remuneravel {
+    private double base;
+
+    public Programador(double base) {
+        this.base = base;
+    }
+
+    @Override
+    public double calcularSalario() {
+        return base * 1.1;
+    }
+
+    @Override
+    public String getCargo() {
+        return "Programador";
+    }
+}
+
+class Garcom implements Remuneravel {
+    private double base;
+
+    public Garcom(double base) {
+        this.base = base;
+    }
+
+    @Override
+    public double calcularSalario() {
+        return base * 1.1;
+    }
+
+    @Override
+    public String getCargo() {
+        return "Garçom";
+    }
+}
+
 // SRP - Apenas processa o cálculo
 class CalculadoraFolha {
 
@@ -75,17 +129,40 @@ public class SOLID_PT1 {
 
         System.out.println("\nTipo de cargo:");
         System.out.println("1 - Desenvolvedor");
-        System.out.println("2 - Designer");
+        System.out.println("2 - Inspetor");
+        System.out.println("3 - Programador");
+        System.out.println("4 - Garçom");
+        System.out.println("5 - Designer");
         System.out.print("Escolha: ");
         int opcao = leitor.nextInt();
 
-        Remuneravel funcionario;
+        Remuneravel funcionario = null;
 
-        if (opcao == 1) {
-            funcionario = new Desenvolvedor(base);
-        } else {
-            funcionario = new Designer(base);
-        }
+switch (opcao) {
+    case 1:
+        funcionario = new Desenvolvedor(base);
+        break;
+
+    case 2:
+        funcionario = new Inspetor(base);
+        break;
+
+    case 3:
+        funcionario = new Programador(base);
+        break;
+
+    case 4:
+        funcionario = new Garcom(base);
+        break;
+
+    case 5:
+        funcionario = new Designer(base);
+        break;
+
+    default:
+        System.out.println("Opção inválida!");
+        funcionario = new Desenvolvedor(base);
+}
 
         CalculadoraFolha calc = new CalculadoraFolha();
         RelatorioService relatorio = new RelatorioService();
