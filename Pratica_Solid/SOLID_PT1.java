@@ -28,6 +28,34 @@ class Designer implements Remuneravel{
     public String getCargo(){return "Designer UI/UX";}
 }
 
+class Marketing implements Remuneravel{
+    private double base;
+    public Marketing (double base){this.base = base;}
+    @Override
+    public double calcularSalario(){return base * 1.1;}
+
+    @Override
+    public String getCargo(){return "Marketing";}
+}
+class jungle implements Remuneravel{
+    private double base;
+    public jungle (double base){this.base = base;}
+    @Override
+    public double calcularSalario(){return base * 0.0;}
+
+    @Override
+    public String getCargo(){return "JUNGLE(sobra nada)";}
+}
+class limpeza implements Remuneravel{
+    private double base;
+    public limpeza (double base){this.base = base;}
+    @Override
+    public double calcularSalario(){return base * 1.2;}
+
+    @Override
+    public String getCargo(){return "limpeza geral";}
+}
+
 //SRP - APENAS PROCESSAR O CALCULO
 
 class CalculadoraFolha{
@@ -53,19 +81,8 @@ public class SOLID_PT1 {
     public static void main (String[] args){
         Scanner leitor = new Scanner(System.in);
 
-        System.out.print("Salário base: R$ ");
-        double base = leitor.nextDouble();
-
-        System.out.print("Tipo de cargo: \n1-Dev | 2-Designer");
-        int opcao = leitor.nextInt();
-
-        Remuneravel funcionario = (opcao == 1) ? new Desenvolvedor(base) : new Designer(base);
-
-        CalculadoraFolha calc = new CalculadoraFolha();
-        RelatorioService relatorio = new RelatorioService();
-
-        relatorio.gerarRelatorio(funcionario, calc.calcular(funcionario));
-
+        System.out.print("salario base: R$:")
+double base = leitor.nextDouble()
         leitor.close();
     }
     
