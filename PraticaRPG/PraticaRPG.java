@@ -40,7 +40,8 @@ public class PraticaRPG {
         while (heroi.hp > 0 && monstro.hp > 0) {
             System.out.println("--- SEU TURNO ---");            
             System.out.println("1 - ATACAR COM ESPADA");            
-            System.out.println("2 - GRITAR PARA INTIMIDAR");            
+            System.out.println("2 - GRITAR PARA INTIMIDAR"); 
+            System.out.println("3 - CURAR (Recupera 10 de HP)");           
             System.out.print("Sua ação: ");
             int acao = leitor.nextInt();
 
@@ -52,6 +53,11 @@ public class PraticaRPG {
                     System.out.println("\n🗣️​ " +heroi.nome+ " gritou: AAAAAAAAAHHHHH!");    
                     System.out.println("O " +monstro.nome + " riu na sua cara lhe chamou de otário e não sofreu dano!");
                     break;
+                case 3:
+                    System.out.println("\n🛡️​ " +heroi.nome+ " usou porção de cura!");    
+                    heroi.hp = heroi.hp + 10;
+                    System.out.println("O " +heroi.nome + " recuperou 10 de HP. (HP Atual: "+ heroi.hp+")");
+                    break;    
                 default:
                     System.out.println("\n ❌​ Ação inválida! Voçê perdeu o turno!");    
             }
