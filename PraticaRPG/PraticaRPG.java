@@ -121,7 +121,7 @@ public class PraticaRPG {
             System.out.println("1 - ATACAR COM ESPADA");            
             System.out.println("2 - GRITAR PARA INTIMIDAR"); 
             System.out.println("3 - CURAR (Recupera 10 de HP)");
-            System.out.println("4 - Magia de Fogo (Causa 20 de Dano)");          
+            System.out.println("4 - MAGIAS (Fogo, Gelo ou Raio)");          
             System.out.print("Sua ação: ");
             int acao = leitor.nextInt();
 
@@ -138,9 +138,25 @@ public class PraticaRPG {
                     heroi.usarPocao();
                     break;
                 case 4: 
-                    System.out.println("O " +monstro.getNome() + " sofreu 20 de dano!");  
-                    heroi.usarMagia(monstro);
-                    System.out.println("O " +monstro.getNome() + " agora tem (HP Atual: " + monstro.getHp() + ")");
+                    System.out.println("\nEscolha a magia: ");
+                    System.out.println("1 - Fogo (Custa 10 de Mana)");
+                    System.out.println("2 - Gelo (Custa 20 de Mana)");
+                    System.out.println("3 - Raio (Custa 35 de Mana)");
+                    System.out.print("Sua escolha: ");
+                    int escolhaMagia = leitor.nextInt();
+                    switch (escolhaMagia){
+                        case 1:
+                            heroi.usarMagiaFogo(monstro);
+                            break;
+                        case 2:
+                            heroi.usarMagiaGelo(monstro);
+                            break;
+                        case 3:
+                            heroi.usarMagiaRaio(monstro);
+                            break;
+                        default:
+                            System.out.println("\n ❌​ Magia inválida! Voçê perdeu o turno!");
+                    }
                     break;
                 default:
                     System.out.println("\n ❌​ Ação inválida! Voçê perdeu o turno!");    
