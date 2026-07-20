@@ -1,348 +1,310 @@
-import java.util.Random;
 import java.util.Scanner;
+import java.util.Random;
 
 class Personagem {
-
     private String nome;
     private int hp;
-    private int hpMax;
+    private int hpMax; // limita o maximo de HP que o personagem pode ter
     private int forca;
-    private int pocoes;
-    private int mana;
-    private int manaMax;
-    private String classe;
-    private boolean defendendo;
 
-    public Personagem(String nome, int hp, int forca, String classe) {
-
+    public Personagem(String nome, int hpMax, int forca) {
         this.nome = nome;
-        this.hp = hp;
-        this.hpMax = hp;
+        this.hpMax = hpMax;
+        this.hp = hpMax; // inicia com o valor máximo de HP
         this.forca = forca;
-        this.pocoes = 3;
-        this.classe = classe;
-        this.defendendo = false;
-
-        if (classe.equals("Mago")) {
-
-            this.mana = 100;
-            this.manaMax = 100;
-
-        } else {
-
-            this.mana = 0;
-            this.manaMax = 0;
-
-        }
     }
 
+    // cofigurar getters e setters para os atributos privados
+    // getter
     public String getNome() {
         return nome;
-
     }
 
     public int getHp() {
         return hp;
-
     }
 
     public int getHpMax() {
         return hpMax;
+    }
 
+    public int getForca() {
+        return forca;
+    }
+
+    // setter
+    // regra limita vida maximo e não permit
+    public void setHp(int novoHp) {
+        if (novoHp > hpMax) {
+            this.hp = hpMax;
+        } else if (novoHp < 0) {
+            this.hp = 0;
+        } else {
+            this.hp = novoHp;
+        }
+    }
+
+    public void atacar(Personagem alvo) {
+        // personagem ataca outro personagem alvo
+        System.out.println("\n⚔️​" + this.nome + " ataca " + alvo.getNome() + " com força de " + this.forca + "!");
+
+        int dano = this.forca;
+        // Reduzir hp do alvo
+        alvo.setHp(alvo.getHp() - dano);
+
+        System.out.println(
+                "🩸 " + alvo.getNome() + " Perdeu " + this.forca + " de HP. (HP Restante: " + alvo.getHp() + ")");
+    }
+
+    public void usarPocao() {
+        System.out.println("\n" + this.getNome() + "usou porção de cura!");
+        Random rand = new Random();
+        int cura = rand.nextInt(21) + 10; // cura aleatória entre 10 e 30
+        this.setHp(this.hp + cura);
+        System.out.println(this.nome + " recuperou " + cura +
+                " de HP.(HP Atual: " + this.getHp() + ")");
+    }
+}
+
+class Mago extends Personagem {
+    private int mana;
+
+    public Mago(String nome, int hpMax, int forca, int mana) {
+        super(nome, hpMax, forca);
+        this.mana = mana;
     }
 
     public int getMana() {
         return mana;
-
     }
 
-    public int getManaMax() {
-        return manaMax;
-
+    public void setMana(int mana) {
+        this.mana = mana;
     }
 
-    public String getClasse() {
-        return classe;
-
+    @Override
+    public void atacar(Personagem alvo) {
+        if (this.mana >= 5) {
+            System.out.println("\n" + this.getNome() +
+                    " jogou bola de mana em "
+                    + alvo.getNome() + "! Mana restante: " + this.mana);
+            this.mana -= 5;
+            int dano = this.getForca() + 5;
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
+                    + dano + " de HP. (HP Restante: "
+                    + alvo.getHp() + ")");
+        } else {
+            System.out.println("\n" + this.getNome() +
+                    " Não possui mana suficiente, deu uma cajadada no "
+                    + alvo.getNome() + "!");
+            int dano = this.getForca() - 5;
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
+                    + dano + " de HP. (HP Restante: "
+                    + alvo.getHp() + ")");
+        }
     }
+
+    public void usarMagiaFogo(Personagem alvo) {
+        if (this.mana >= 10) {
+            System.out.println("\n" + this.getNome() + " lançou magia de fogo em " + alvo.getNome() + "!");
+            this.mana -= 10;
+            double danoMagico = this.getForca() * 1.5; // dano mágico é 1.5 vezes a força
+            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            System.out.println("Dano Magico: " + (int) danoMagico +
+                    " Mana restante: " + this.mana);
+        } else {
+            System.out.println("\n" + this.getNome() +
+                    "tentou lançar magia, mas não tem mana suficiente!");
+        }
+    }
+
+    public void usarMagiaRaio(Personagem alvo) {
+        if (this.mana >= 35) {
+            System.out.println("\n" + this.getNome() + " lançou magia de raio em " + alvo.getNome() + "!");
+            this.mana -= 35;
+            double danoMagico = this.getForca() * 2; // dano mágico é 1.5 vezes a força
+            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            System.out.println("Dano Magico: " + (int) danoMagico +
+                    " Mana restante: " + this.mana);
+        } else {
+            System.out.println("\n" + this.getNome() +
+                    "tentou lançar magia, mas não tem mana suficiente!");
+        }
+    }
+
+    public void usarMagiaGelo(Personagem alvo) {
+        if (this.mana >= 20) {
+            System.out.println("\n" + this.getNome() + " lançou magia de gelo em " + alvo.getNome() + "!");
+            this.mana -= 20;
+            double danoMagico = this.getForca() * 1.8; // dano mágico é 1.5 vezes a força
+            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            System.out.println("Dano Magico: " + (int) danoMagico +
+                    " Mana restante: " + this.mana);
+        } else {
+            System.out.println("\n" + this.getNome() +
+                    "tentou lançar magia, mas não tem mana suficiente!");
+        }
+    }
+}
+
+class Arqueiro extends Personagem {
+    private int flechas;
+    private int forcaFlecha;
+
+    public Arqueiro(String nome, int hpMax, int forca, int flechas, int forcaFlecha) {
+        super(nome, hpMax, forca);
+        this.flechas = flechas;
+        this.forcaFlecha = forcaFlecha;
+    }
+
+    @Override
 
     public void atacar(Personagem alvo) {
-        Random random = new Random();
-        int dano = forca;
-        if (random.nextInt(100) < 20) {
-            dano *= 2;
-
-            System.out.println("💥 ATAQUE CRÍTICO!");
-
-        }
-
-        if (alvo.defendendo) {
-
-            dano /= 2;
-
-            alvo.defendendo = false;
-
-            System.out.println(alvo.nome + " reduziu o dano pela metade!");
-
-        }
-
-        alvo.hp -= dano;
-        if (alvo.hp < 0) {
-            alvo.hp = 0;
-
-        }
-
-        System.out.println("⚔️ " + nome + " causou " + dano + " de dano.");
-        System.out.println(alvo.nome + " agora possui " + alvo.hp + " HP.");
-
-    }
-
-    public void golpePesado(Personagem alvo) {
-        int dano = forca + 20;
-        alvo.hp -= dano;
-
-        if (alvo.hp < 0) {
-            alvo.hp = 0;
-
-        }
-        
-        System.out.println("🗡️ " + nome + " usou GOLPE PESADO!");
-        System.out.println("Causou " + dano + " de dano.");
-        System.out.println(alvo.nome + " agora possui " + alvo.hp + " HP.");
-
-    }
-
-    public void bolaDeFogo(Personagem alvo) {
-        if (mana >= 20) {
-            mana -= 20;
-            int dano = 50;
-            alvo.hp -= dano;
-            if (alvo.hp < 0) {
-                alvo.hp = 0;
-
-            }
-
-            System.out.println("🔥 " + nome + " lançou BOLA DE FOGO!");
-            System.out.println("Causou " + dano + " de dano.");
-            System.out.println("Mana restante: " + mana);
+        if (this.flechas >= 1) {
+            System.out.println("\n🏹 ​" + this.getNome() +
+                    " Atirou uma flecha em "
+                    + alvo.getNome() + "! Restam "+this.flechas+ " flechas!" );
+            this.flechas--;
+            int dano = this.getForca() + this.forcaFlecha;
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
+                    + dano + " de HP. (HP Restante: "
+                    + alvo.getHp() + ")");
 
         } else {
-
-            System.out.println("❌ Mana insuficiente!");
-
+            System.out.println("\n ​" + this.getNome() +
+                    " não tem flechas ele correu e bateu com o arco na cabeça de "
+                    + alvo.getNome() + "!");
+            int dano = this.getForca() - 5;
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
+                    + dano + " de HP. (HP Restante: "
+                    + alvo.getHp() + ")");
         }
-
     }
-
-    public void flechaDupla(Personagem alvo) {
-
-        System.out.println("🏹 " + nome + " usou FLECHA DUPLA!");
-
-        atacar(alvo);
-        if (alvo.hp > 0) {
-            atacar(alvo);
-
-        }
-
-    }
-
-    public void curaDivina() {
-        int cura = 40;
-        hp += cura;
-        if (hp > hpMax) {
-            hp = hpMax;
-
-        }
-
-        System.out.println("✨ " + nome + " usou CURA DIVINA!");
-        System.out.println("Recuperou " + cura + " HP.");
-        System.out.println("HP atual: " + hp);
-
-    }
-
-    public void usarPocao() {
-        if (pocoes > 0) {
-            hp += 30;
-            if (hp > hpMax) {
-                hp = hpMax;
-
-            }
-
-            pocoes--;
-
-            System.out.println("🧪 Você recuperou 30 HP!");
-            System.out.println("HP: " + hp);
-            System.out.println("Poções restantes: " + pocoes);
-
-        } else {
-
-            System.out.println("❌ Você não possui mais poções.");
-
-        }
-
-    }
-
-    public void defender() {
-        defendendo = true;
-        System.out.println("🛡️ " + nome + " entrou em posição de defesa.");
-
-    }
-
 
 }
 
+class Guerreiro extends Personagem {
+
+    public Guerreiro(String nome, int hpMax, int forca) {
+        super(nome, hpMax, forca);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        System.out.println("\n🗡️ " + this.getNome() + " desferiu um golpe poderoso em " + alvo.getNome() + "!");
+
+        int dano = this.getForca() + 10;
+
+        alvo.setHp(alvo.getHp() - dano);
+
+        System.out.println("🩸 " + alvo.getNome() + " perdeu " + dano + " de HP. (HP Restante: " + alvo.getHp() + ")");
+    }
+}
+class Monstro extends Personagem {
+    public Monstro(String nome, int hpMax, int forca) {
+        super(nome, hpMax, forca);
+    }
+}
+
+// class mosntro chefe que herda monstro so que o hp e a forma maiores que o
+// montro normal
+class MonstroChefe extends Monstro {
+    // valor de hp e força maior que o monstro normal
+    public MonstroChefe(String nome, int hpMax, int forca) {
+        super(nome, hpMax * 2, forca + 15);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        System.out.println("\n 👹 " + this.getNome() + " ataca ferozmente " + alvo.getNome() + " com força de "
+                + this.getForca() + "!");
+        super.atacar(alvo);
+    }
+}
+
 public class PraticaRPG {
-
-    public static void main(String[] args) {
-
+    public static void main(String[] args){
         Scanner leitor = new Scanner(System.in);
+        System.out.println("==========================");
+        System.out.println("BEM VINDO A ARENA (NOME DA SUA ARENA)");
+        System.out.println("==========================");
 
-        System.out.println("===========================");
-        System.out.println("        ARENA RPG");
-        System.out.println("===========================");
+        System.out.print("Digite o nome do seu Personagem: ");
+        String nomeHeroi = leitor.nextLine();
 
-        System.out.print("Nome do herói: ");
+        Personagem heroi = new Arqueiro(nomeHeroi, 150, 10, 1,10);
 
-        String nome = leitor.nextLine();
+        MonstroChefe monstro = new MonstroChefe("Orc Zumbi chefe",150, 15);
 
-        System.out.println("\nEscolha sua classe:");
-        System.out.println("1 - Guerreiro");
-        System.out.println("2 - Mago");
-        System.out.println("3 - Arqueiro");
-        System.out.println("4 - Paladino");
-
-        int classeEscolhida = leitor.nextInt();
-
-        Personagem heroi;
-
-        switch (classeEscolhida) {
-
-            case 1:
-                heroi = new Personagem(nome + " (Guerreiro)", 120, 25, "Guerreiro");
-                break;
-
-            case 2:
-                heroi = new Personagem(nome + " (Mago)", 80, 35, "Mago");
-                break;
-
-            case 3:
-                heroi = new Personagem(nome + " (Arqueiro)", 90, 30, "Arqueiro");
-                break;
-
-            default:
-                heroi = new Personagem(nome + " (Paladino)", 140, 20, "Paladino");
-
-        }
-
-        Personagem monstro = new Personagem("👹 THANOS", 140, 18, "Monstro");
-
+        System.out.println("\n Um "+monstro.getNome()+" apareceu! Prepare para a chibata!");
+       
         while (heroi.getHp() > 0 && monstro.getHp() > 0) {
+            System.out.println("--- SEU TURNO ---");            
+            System.out.println("1 - ATACAR");            
+            System.out.println("2 - GRITAR PARA INTIMIDAR"); 
+            System.out.println("3 - CURAR (Recupera 10 de HP)");
+            System.out.println("4 - MAGIAS (Fogo, Gelo ou Raio)");          
+            System.out.print("Sua ação: ");
+            int acao = leitor.nextInt();
 
-            System.out.println("\n===========================");
-
-            System.out.println(
-                heroi.getNome() +
-                " HP: " +
-                heroi.getHp() +
-                "/" +
-                heroi.getHpMax()
-            );
-
-            if (heroi.getClasse().equals("Mago")) {
-
-                System.out.println(
-                    "Mana: " +
-                    heroi.getMana() +
-                    "/" +
-                    heroi.getManaMax()
-                );
-
-            }
-
-            System.out.println(
-                monstro.getNome() +
-                " HP: " +
-                monstro.getHp()
-            );
-
-            System.out.println("===========================");
-            System.out.println("1 - Atacar");
-            System.out.println("2 - Habilidade Especial");
-            System.out.println("3 - Defender");
-            System.out.println("4 - Usar Poção");
-            System.out.println("5 - Gritar");
-
-            int opcao = leitor.nextInt();
-
-            switch (opcao) {
-
+            switch (acao){
                 case 1:
                     heroi.atacar(monstro);
                     break;
-
                 case 2:
-                    System.out.println("\n✨ HABILIDADE ESPECIAL!");
-                    switch (heroi.getClasse()) {
-
-                       case "Guerreiro":
-                            heroi.golpePesado(monstro);
-                            break;
-
-                        case "Mago":
-                            heroi.bolaDeFogo(monstro);
-                            break;
-
-                        case "Arqueiro":
-                            heroi.flechaDupla(monstro);
-                            break;
-
-                        case "Paladino":
-                            heroi.curaDivina();
-                            break;
-
-                        default:
-                            System.out.println("Classe sem habilidade.");
-                            break;
-
-                    }
-                   
-                case 3:
-                    heroi.defender();
+                    System.out.println("\n🗣️​ " +heroi.getNome()+ " gritou: AAAAAAAAAHHHHH!");    
+                    System.out.println("O " +monstro.getNome() + " riu na sua cara lhe chamou de otário e não sofreu dano!");
                     break;
-
-                case 4:
+                case 3:
+                    System.out.println("\n🛡️​ " +heroi.getNome()+ " usou porção de cura!");
                     heroi.usarPocao();
                     break;
-
-                case 5:
-                    System.out.println("🗣️ Você gritou muito alto...");
-                    System.out.println("O monstro apenas riu.");
-                    break;
-
+                case 4: 
+                if( heroi instanceof Mago){
+                    Mago magoTemp = (Mago) heroi;
+                    System.out.println("\nEscolha a magia: ");
+                    System.out.println("1 - Fogo (Custa 10 de Mana)");
+                    System.out.println("2 - Gelo (Custa 20 de Mana)");
+                    System.out.println("3 - Raio (Custa 35 de Mana)");
+                    System.out.print("Sua escolha: ");
+                    int escolhaMagia = leitor.nextInt();
+                    switch (escolhaMagia){
+                        case 1:
+                            magoTemp.usarMagiaFogo(monstro);
+                            break;
+                        case 2:
+                            magoTemp.usarMagiaGelo(monstro);
+                            break;
+                        case 3:
+                            magoTemp.usarMagiaRaio(monstro);
+                            break;
+                        default:
+                            System.out.println("\n ❌​ Magia inválida! Voçê perdeu o turno!");
+                    }
+                }else{
+                    System.out.println("\n ❌​ Você não afinidade com magia! Perdeu o turno TENTANDO LER o pergaminho de PONTA CABEÇA 0.0!");
+                }
+                break;
                 default:
-                    System.out.println("Ação inválida.");
-
+                    System.out.println("\n ❌​ Ação inválida! Voçê perdeu o turno!");     
             }
-
-            if (monstro.getHp() > 0) {
-                System.out.println("\n----- TURNO DO MONSTRO -----");
+            
+            if (monstro.getHp() > 0){
+                System.out.println("\n--- TURNO DO INIMIGO ---");
                 monstro.atacar(heroi);
-
-            }
-
+            }  
         }
-
-        System.out.println("\n===========================");
-        if (heroi.getHp() > 0) {
-            System.out.println("🏆 Vitória!");
-        } else {
-
-            System.out.println("☠️ Você foi derrotado.");
-
+        if (heroi.getHp() > 0){
+            System.out.println("VITÓRIA VC DERROUTOU O "+monstro.getNome()+":D");
+        } else{
+            System.out.println("GAME OVER - " + heroi.getNome() + " MORREU NA ARENA X-X !");
         }
 
         leitor.close();
-
     }
 
 }
