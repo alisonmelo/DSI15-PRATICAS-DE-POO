@@ -160,7 +160,6 @@ class Arqueiro extends Personagem {
     }
 
     @Override
-
     public void atacar(Personagem alvo) {
         if (this.flechas >= 1) {
             System.out.println("\n🏹 ​" + this.getNome() +
@@ -192,7 +191,30 @@ class Guerreiro extends Personagem {
     public Guerreiro(String nome, int hpMax, int forca) {
         super(nome, hpMax, forca);
     }
-
+// Atravez do polimorfismo @Override 
+// modifique o método atacar para o guerreiro
+@Override
+public void atacar(Personagem alvo){
+            Random rand = new Random();    
+            System.out.println("\n" + this.getNome() + 
+                            " lançou magia de raio em "
+                            + alvo.getNome() + "!");
+            int danoBase = this.getForca();
+            int bonus = rand.nextInt(41) + 10;
+            int dano = danoBase + bonus;
+            
+            if(dano > (danoBase*2)){
+                 System.out.println("🩸 Ataque critico Dano de:" + dano+"!");
+            }else if (dano > danoBase){
+                System.out.println("🩸 Dano padrão maior que o dano base, Dano de:" + dano+"!" );
+            }
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
+                    + dano + " de HP. (HP Restante: "
+                    + alvo.getHp() + ")");
+            }
+           
+            
 }
 
 class Monstro extends Personagem {
@@ -227,7 +249,7 @@ public class PraticaRPG {
         System.out.print("Digite o nome do seu Personagem: ");
         String nomeHeroi = leitor.nextLine();
 
-        Personagem heroi = new Arqueiro(nomeHeroi, 150, 10, 1,10);
+        Personagem heroi = new Guerreiro(nomeHeroi, 150, 10);
 
         MonstroChefe monstro = new MonstroChefe("Orc Zumbi chefe",150, 15);
 
@@ -238,7 +260,9 @@ public class PraticaRPG {
             System.out.println("1 - ATACAR");            
             System.out.println("2 - GRITAR PARA INTIMIDAR"); 
             System.out.println("3 - CURAR (Recupera 10 de HP)");
+            if(heroi instanceof Mago){
             System.out.println("4 - MAGIAS (Fogo, Gelo ou Raio)");          
+            }
             System.out.print("Sua ação: ");
             int acao = leitor.nextInt();
 
