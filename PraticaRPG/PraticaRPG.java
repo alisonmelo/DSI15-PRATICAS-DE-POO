@@ -226,85 +226,313 @@ class MonstroChefe extends Monstro {
     }
 }
 
-public class PraticaRPG {
-    public static void main(String[] args){
-        Scanner leitor = new Scanner(System.in);
-        System.out.println("==========================");
-        System.out.println("BEM VINDO A ARENA (NOME DA SUA ARENA)");
-        System.out.println("==========================");
+class Assassino extends Personagem {
+    private int energia;
 
-        System.out.print("Digite o nome do seu Personagem: ");
-        String nomeHeroi = leitor.nextLine();
-
-        Personagem heroi = new Arqueiro(nomeHeroi, 150, 10, 1,10);
-
-        MonstroChefe monstro = new MonstroChefe("Orc Zumbi chefe",150, 15);
-
-        System.out.println("\n Um "+monstro.getNome()+" apareceu! Prepare para a chibata!");
-       
-        while (heroi.getHp() > 0 && monstro.getHp() > 0) {
-            System.out.println("--- SEU TURNO ---");            
-            System.out.println("1 - ATACAR");            
-            System.out.println("2 - GRITAR PARA INTIMIDAR"); 
-            System.out.println("3 - CURAR (Recupera 10 de HP)");
-            System.out.println("4 - MAGIAS (Fogo, Gelo ou Raio)");          
-            System.out.print("Sua ação: ");
-            int acao = leitor.nextInt();
-
-            switch (acao){
-                case 1:
-                    heroi.atacar(monstro);
-                    break;
-                case 2:
-                    System.out.println("\n🗣️​ " +heroi.getNome()+ " gritou: AAAAAAAAAHHHHH!");    
-                    System.out.println("O " +monstro.getNome() + " riu na sua cara lhe chamou de otário e não sofreu dano!");
-                    break;
-                case 3:
-                    System.out.println("\n🛡️​ " +heroi.getNome()+ " usou porção de cura!");
-                    heroi.usarPocao();
-                    break;
-                case 4: 
-                if( heroi instanceof Mago){
-                    Mago magoTemp = (Mago) heroi;
-                    System.out.println("\nEscolha a magia: ");
-                    System.out.println("1 - Fogo (Custa 10 de Mana)");
-                    System.out.println("2 - Gelo (Custa 20 de Mana)");
-                    System.out.println("3 - Raio (Custa 35 de Mana)");
-                    System.out.print("Sua escolha: ");
-                    int escolhaMagia = leitor.nextInt();
-                    switch (escolhaMagia){
-                        case 1:
-                            magoTemp.usarMagiaFogo(monstro);
-                            break;
-                        case 2:
-                            magoTemp.usarMagiaGelo(monstro);
-                            break;
-                        case 3:
-                            magoTemp.usarMagiaRaio(monstro);
-                            break;
-                        default:
-                            System.out.println("\n ❌​ Magia inválida! Voçê perdeu o turno!");
-                    }
-                }else{
-                    System.out.println("\n ❌​ Você não afinidade com magia! Perdeu o turno TENTANDO LER o pergaminho de PONTA CABEÇA 0.0!");
-                }
-                break;
-                default:
-                    System.out.println("\n ❌​ Ação inválida! Voçê perdeu o turno!");     
-            }
-            
-            if (monstro.getHp() > 0){
-                System.out.println("\n--- TURNO DO INIMIGO ---");
-                monstro.atacar(heroi);
-            }  
-        }
-        if (heroi.getHp() > 0){
-            System.out.println("VITÓRIA VC DERROUTOU O "+monstro.getNome()+":D");
-        } else{
-            System.out.println("GAME OVER - " + heroi.getNome() + " MORREU NA ARENA X-X !");
-        }
-
-        leitor.close();
+    public Assassino(String nome, int hpMax, int forca, int energia) {
+        super(nome, hpMax, forca);
+        this.energia = energia;
     }
 
+    @Override
+    public void atacar(Personagem alvo) {
+        Random rand = new Random();
+
+        if (energia >= 10) {
+            energia -= 10;
+            int dano = getForca() + rand.nextInt(21) + 10;
+            System.out.println("\n🗡️ " + getNome() + " apareceu nas sombras e acertou um golpe crítico em " + alvo.getNome() + "!");
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("Dano: " + dano + " | Energia: " + energia);
+        } else {
+            int dano = getForca();
+            System.out.println("\n🗡️ " + getNome() + " atacou normalmente.");
+            alvo.setHp(alvo.getHp() - dano);
+        }
+    }
+}
+
+class Paladino extends Personagem {
+    private int fe;
+
+    public Paladino(String nome, int hpMax, int forca, int fe) {
+        super(nome, hpMax, forca);
+        this.fe = fe;
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        int dano = getForca() + 15;
+        System.out.println("\n⚜️ " + getNome() + " usou Golpe Sagrado em " + alvo.getNome() + "!");
+        alvo.setHp(alvo.getHp() - dano);
+        System.out.println("Dano: " + dano);
+    }
+
+    public void curaDivina() {
+        if (fe >= 20) {
+            fe -= 20;
+            setHp(getHp() + 40);
+            System.out.println(getNome() + " recuperou 40 de HP!");
+        } else {
+            System.out.println(getNome() + " não possui fé suficiente!");
+        }
+    }
+}
+
+class Ninja extends Personagem {
+    private int shuriken;
+
+    public Ninja(String nome, int hpMax, int forca, int shuriken) {
+        super(nome, hpMax, forca);
+        this.shuriken = shuriken;
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        if (shuriken > 0) {
+            shuriken--;
+            int dano = getForca() + 20;
+            System.out.println("\n🥷 " + getNome() + " lançou uma Shuriken Mortal em " + alvo.getNome() + "!");
+            alvo.setHp(alvo.getHp() - dano);
+            System.out.println("Dano: " + dano + " | Shurikens restantes: " + shuriken);
+        } else {
+            super.atacar(alvo);
+        }
+    }
+}
+
+class Goblin extends Monstro {
+
+    public Goblin(String nome) {
+        super(nome, 80, 12);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        System.out.println("\n👺 " + getNome() + " atacou com sua adaga enferrujada!");
+        super.atacar(alvo);
+    }
+}
+
+class Esqueleto extends Monstro {
+
+    public Esqueleto(String nome) {
+        super(nome, 100, 18);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        System.out.println("\n💀 " + getNome() + " golpeou com um osso gigante!");
+        super.atacar(alvo);
+    }
+}
+
+class Dragao extends Monstro {
+
+    public Dragao(String nome) {
+        super(nome, 300, 35);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        int dano = getForca() + 25;
+        System.out.println("\n🐉 " + getNome() + " cuspiu fogo em " + alvo.getNome() + "!");
+        alvo.setHp(alvo.getHp() - dano);
+        System.out.println(alvo.getNome() + " sofreu " + dano + " de dano.");
+    }
+}
+
+class Bruxa extends Monstro {
+
+    public Bruxa(String nome) {
+        super(nome, 140, 20);
+    }
+
+    @Override
+    public void atacar(Personagem alvo) {
+        Random rand = new Random();
+        int dano = getForca() + rand.nextInt(16);
+        System.out.println("\n🧙‍♀️ " + getNome() + " lançou uma maldição em " + alvo.getNome() + "!");
+        alvo.setHp(alvo.getHp() - dano);
+        System.out.println("Dano mágico: " + dano);
+    }
+}
+
+public class PraticaRPG {
+    public static void main(String[] args) {
+    Scanner leitor = new Scanner(System.in);
+    Random rand = new Random();
+
+    System.out.println("===============================");
+    System.out.println("     BEM-VINDO À ARENA RPG");
+    System.out.println("===============================");
+
+    System.out.print("Digite o nome do seu personagem: ");
+    String nomeHeroi = leitor.nextLine();
+
+    System.out.println("\nEscolha sua classe:");
+    System.out.println("1 - Guerreiro");
+    System.out.println("2 - Mago");
+    System.out.println("3 - Arqueiro");
+    System.out.println("4 - Assassino");
+    System.out.println("5 - Paladino");
+    System.out.println("6 - Ninja");
+    System.out.print("Opção: ");
+
+    int escolha = leitor.nextInt();
+
+    Personagem heroi;
+
+    switch (escolha) {
+        case 1:
+            heroi = new Guerreiro(nomeHeroi, 150, 20);
+            break;
+
+        case 2:
+            heroi = new Mago(nomeHeroi, 110, 15, 100);
+            break;
+
+        case 3:
+            heroi = new Arqueiro(nomeHeroi, 120, 15, 15, 10);
+            break;
+
+        case 4:
+            heroi = new Assassino(nomeHeroi, 120, 18, 50);
+            break;
+
+        case 5:
+            heroi = new Paladino(nomeHeroi, 170, 18, 60);
+            break;
+
+        case 6:
+            heroi = new Ninja(nomeHeroi, 130, 20, 10);
+            break;
+
+        default:
+            heroi = new Guerreiro(nomeHeroi, 150, 20);
+            break;
+    }
+
+    Monstro monstro;
+
+    int sorteio = rand.nextInt(5);
+
+    switch (sorteio) {
+        case 0:
+            monstro = new Goblin("Goblin");
+            break;
+
+        case 1:
+            monstro = new Esqueleto("Esqueleto Guerreiro");
+            break;
+
+        case 2:
+            monstro = new Dragao("Dragão Ancestral");
+            break;
+
+        case 3:
+            monstro = new Bruxa("Bruxa Sombria");
+            break;
+
+        default:
+            monstro = new MonstroChefe("Orc Zumbi Chefe", 150, 15);
+            break;
+    }
+
+    System.out.println("\nUm " + monstro.getNome() + " apareceu!");
+
+    while (heroi.getHp() > 0 && monstro.getHp() > 0) {
+
+        System.out.println("\n====================");
+        System.out.println("HP " + heroi.getNome() + ": " + heroi.getHp());
+        System.out.println("HP " + monstro.getNome() + ": " + monstro.getHp());
+        System.out.println("====================");
+
+        System.out.println("1 - Atacar");
+        System.out.println("2 - Curar");
+
+        if (heroi instanceof Mago) {
+            System.out.println("3 - Magias");
+        }
+
+        if (heroi instanceof Paladino) {
+            System.out.println("4 - Cura Divina");
+        }
+
+        System.out.print("Escolha: ");
+        int acao = leitor.nextInt();
+
+        switch (acao) {
+
+            case 1:
+                heroi.atacar(monstro);
+                break;
+
+            case 2:
+                heroi.usarPocao();
+                break;
+
+            case 3:
+
+                if (heroi instanceof Mago) {
+                    Mago mago = (Mago) heroi;
+
+                    System.out.println("1 - Fogo");
+                    System.out.println("2 - Gelo");
+                    System.out.println("3 - Raio");
+
+                    int magia = leitor.nextInt();
+
+                    switch (magia) {
+
+                        case 1:
+                            mago.usarMagiaFogo(monstro);
+                            break;
+
+                        case 2:
+                            mago.usarMagiaGelo(monstro);
+                            break;
+
+                        case 3:
+                            mago.usarMagiaRaio(monstro);
+                            break;
+
+                        default:
+                            System.out.println("Magia inválida!");
+                    }
+
+                } else {
+                    System.out.println("Você não é um Mago!");
+                }
+
+                break;
+
+            case 4:
+
+                if (heroi instanceof Paladino) {
+                    ((Paladino) heroi).curaDivina();
+                } else {
+                    System.out.println("Ação inválida.");
+                }
+
+                break;
+
+            default:
+                System.out.println("Você perdeu o turno.");
+        }
+
+        if (monstro.getHp() > 0) {
+            System.out.println("\n--- TURNO DO MONSTRO ---");
+            monstro.atacar(heroi);
+        }
+    }
+
+    if (heroi.getHp() > 0) {
+        System.out.println("\n🏆 PARABÉNS! Você derrotou " + monstro.getNome() + "!");
+    } else {
+        System.out.println("\n💀 GAME OVER! " + heroi.getNome() + " foi derrotado.");
+    }
+
+    leitor.close();
+}
 }
