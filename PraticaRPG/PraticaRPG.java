@@ -4,18 +4,15 @@ import java.util.Random;
 class Personagem {
     private String nome;
     private int hp;
-    private int hpMax; // limita o maximo de HP que o personagem pode ter
+    private int hpMax; 
     private int forca;
 
     public Personagem(String nome, int hpMax, int forca) {
         this.nome = nome;
         this.hpMax = hpMax;
-        this.hp = hpMax; // inicia com o valor máximo de HP
+        this.hp = hpMax; 
         this.forca = forca;
     }
-
-    // cofigurar getters e setters para os atributos privados
-    // getter
     public String getNome() {
         return nome;
     }
@@ -32,8 +29,6 @@ class Personagem {
         return forca;
     }
 
-    // setter
-    // regra limita vida maximo e não permit
     public void setHp(int novoHp) {
         if (novoHp > hpMax) {
             this.hp = hpMax;
@@ -45,11 +40,9 @@ class Personagem {
     }
 
     public void atacar(Personagem alvo) {
-        // personagem ataca outro personagem alvo
         System.out.println("\n⚔️​" + this.nome + " ataca " + alvo.getNome() + " com força de " + this.forca + "!");
 
         int dano = this.forca;
-        // Reduzir hp do alvo
         alvo.setHp(alvo.getHp() - dano);
 
         System.out.println(
@@ -59,7 +52,7 @@ class Personagem {
     public void usarPocao() {
         System.out.println("\n" + this.getNome() + "usou porção de cura!");
         Random rand = new Random();
-        int cura = rand.nextInt(21) + 10; // cura aleatória entre 10 e 30
+        int cura = rand.nextInt(21) + 10;
         this.setHp(this.hp + cura);
         System.out.println(this.nome + " recuperou " + cura +
                 " de HP.(HP Atual: " + this.getHp() + ")");
@@ -110,7 +103,7 @@ class Mago extends Personagem {
         if (this.mana >= 10) {
             System.out.println("\n" + this.getNome() + " lançou magia de fogo em " + alvo.getNome() + "!");
             this.mana -= 10;
-            double danoMagico = this.getForca() * 1.5; // dano mágico é 1.5 vezes a força
+            double danoMagico = this.getForca() * 1.5; 
             alvo.setHp(alvo.getHp() - (int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
@@ -124,7 +117,7 @@ class Mago extends Personagem {
         if (this.mana >= 35) {
             System.out.println("\n" + this.getNome() + " lançou magia de raio em " + alvo.getNome() + "!");
             this.mana -= 35;
-            double danoMagico = this.getForca() * 2; // dano mágico é 1.5 vezes a força
+            double danoMagico = this.getForca() * 2; 
             alvo.setHp(alvo.getHp() - (int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
@@ -138,7 +131,7 @@ class Mago extends Personagem {
         if (this.mana >= 20) {
             System.out.println("\n" + this.getNome() + " lançou magia de gelo em " + alvo.getNome() + "!");
             this.mana -= 20;
-            double danoMagico = this.getForca() * 1.8; // dano mágico é 1.5 vezes a força
+            double danoMagico = this.getForca() * 1.8; 
             alvo.setHp(alvo.getHp() - (int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
@@ -210,10 +203,7 @@ class Monstro extends Personagem {
     }
 }
 
-// class mosntro chefe que herda monstro so que o hp e a forma maiores que o
-// montro normal
 class MonstroChefe extends Monstro {
-    // valor de hp e força maior que o monstro normal
     public MonstroChefe(String nome, int hpMax, int forca) {
         super(nome, hpMax * 2, forca + 15);
     }
