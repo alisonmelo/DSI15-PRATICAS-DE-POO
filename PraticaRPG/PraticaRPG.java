@@ -1,6 +1,39 @@
 import java.util.Scanner;
 import java.util.Random;
 
+interface Usavel{
+    void usar(Personagem alvo);
+}
+
+interface Inimigo {
+    String getNome();
+    int getHp();
+    void receberDano(int dano);
+    int calcularDanoAtaque();
+}
+
+class NarradorDeCombate{
+    public static void narrarAtaque(String atacante,String alvo, int dano, int hpRestante){
+        System.out.println("\n⚔️​  "+ atacante +" desferiu um ataque!");
+        System.out.println("\n🩸​  "+ alvo + " perdeu " + dano + "de HP. (HP Restante: " +hpRestante+")");
+    }
+    public static void narrarCura(String nome, int cura, int hpAtual){
+        System.out.println("\n🛡️​​  "+ nome +" usou um intem de cura!");
+        System.out.println("\n💖​ Recuperou " + cura + "de HP. (HP Atual: " +hpAtual+")");
+    }
+
+}
+
+class PocaoVida implements Usavel {
+    @Override
+    public void usar(Personagem alvo){
+        Random rand = new Random();
+        int cura = rand.nextInt(21) + 10; // cura aleatória entre 10 e 30
+        alvo.setHp(alvo.getHp() + cura);
+        NarradorDeCombate.narrarCura(alvo.getNome(),cura, alvo.getHp());
+    }
+}
+
 class Personagem {
     private String nome;
     private int hp;
@@ -44,25 +77,15 @@ class Personagem {
         }
     }
 
-    public void atacar(Personagem alvo) {
-        // personagem ataca outro personagem alvo
-        System.out.println("\n⚔️​" + this.nome + " ataca " + alvo.getNome() + " com força de " + this.forca + "!");
-
+    public void atacar(Inimigo alvo) {
         int dano = this.forca;
         // Reduzir hp do alvo
-        alvo.setHp(alvo.getHp() - dano);
-
-        System.out.println(
-                "🩸 " + alvo.getNome() + " Perdeu " + this.forca + " de HP. (HP Restante: " + alvo.getHp() + ")");
+        alvo.receberDano(dano);
+        NarradorDeCombate.narrarAtaque(this.nome, alvo.getNome(), dano, alvo.getHp());
     }
 
-    public void usarPocao() {
-        System.out.println("\n" + this.getNome() + "usou porção de cura!");
-        Random rand = new Random();
-        int cura = rand.nextInt(21) + 10; // cura aleatória entre 10 e 30
-        this.setHp(this.hp + cura);
-        System.out.println(this.nome + " recuperou " + cura +
-                " de HP.(HP Atual: " + this.getHp() + ")");
+    public void usarItem(Usavel item) {
+       item.usar(this);
     }
 }
 
@@ -83,26 +106,28 @@ class Mago extends Personagem {
     }
 
     @Override
-    public void atacar(Personagem alvo) {
+    public void atacar(Inimigo alvo) {
         if (this.mana >= 5) {
             System.out.println("\n" + this.getNome() +
                     " jogou bola de mana em "
                     + alvo.getNome() + "! Mana restante: " + this.mana);
             this.mana -= 5;
             int dano = this.getForca() + 5;
-            alvo.setHp(alvo.getHp() - dano);
-            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
-                    + dano + " de HP. (HP Restante: "
-                    + alvo.getHp() + ")");
+            alvo.receberDano(dano);;
+            NarradorDeCombate.narrarAtaque(this.getNome(), 
+                                            alvo.getNome(), 
+                                            dano, 
+                                            alvo.getHp());
         } else {
             System.out.println("\n" + this.getNome() +
                     " Não possui mana suficiente, deu uma cajadada no "
                     + alvo.getNome() + "!");
             int dano = this.getForca() - 5;
-            alvo.setHp(alvo.getHp() - dano);
-            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
-                    + dano + " de HP. (HP Restante: "
-                    + alvo.getHp() + ")");
+            alvo.receberDano(dano);
+            NarradorDeCombate.narrarAtaque(this.getNome(), 
+                                            alvo.getNome(), 
+                                            dano, 
+                                            alvo.getHp());
         }
     }
 
@@ -160,27 +185,30 @@ class Arqueiro extends Personagem {
     }
 
     @Override
-    public void atacar(Personagem alvo) {
+    public void atacar(Inimigo alvo) {
         if (this.flechas >= 1) {
             System.out.println("\n🏹 ​" + this.getNome() +
                     " Atirou uma flecha em "
                     + alvo.getNome() + "! Restam "+this.flechas+ " flechas!" );
             this.flechas--;
             int dano = this.getForca() + this.forcaFlecha;
-            alvo.setHp(alvo.getHp() - dano);
-            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
-                    + dano + " de HP. (HP Restante: "
-                    + alvo.getHp() + ")");
+            alvo.receberDano(dano);
+            NarradorDeCombate.narrarAtaque(this.getNome(), 
+                                            alvo.getNome(), 
+                                            dano, 
+                                            alvo.getHp());
 
         } else {
             System.out.println("\n ​" + this.getNome() +
                     " não tem flechas ele correu e bateu com o arco na cabeça de "
                     + alvo.getNome() + "!");
             int dano = this.getForca() - 5;
-            alvo.setHp(alvo.getHp() - dano);
-            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
-                    + dano + " de HP. (HP Restante: "
-                    + alvo.getHp() + ")");
+            alvo.receberDano(dano);
+            NarradorDeCombate.narrarAtaque(this.getNome(), 
+                                            alvo.getNome(), 
+                                            dano, 
+                                            alvo.getHp());
+
         }
     }
 
@@ -194,24 +222,22 @@ class Guerreiro extends Personagem {
 // Atravez do polimorfismo @Override 
 // modifique o método atacar para o guerreiro
 @Override
-public void atacar(Personagem alvo){
+public void atacar(Inimigo alvo){
             Random rand = new Random();    
-            System.out.println("\n" + this.getNome() + 
-                            " lançou magia de raio em "
-                            + alvo.getNome() + "!");
             int danoBase = this.getForca();
             int bonus = rand.nextInt(41) + 10;
             int dano = danoBase + bonus;
             
-            if(dano > (danoBase*2)){
-                 System.out.println("🩸 Ataque critico Dano de:" + dano+"!");
-            }else if (dano > danoBase){
-                System.out.println("🩸 Dano padrão maior que o dano base, Dano de:" + dano+"!" );
-            }
-            alvo.setHp(alvo.getHp() - dano);
-            System.out.println("🩸 " + alvo.getNome() + " Perdeu "
-                    + dano + " de HP. (HP Restante: "
-                    + alvo.getHp() + ")");
+            // if(dano > (danoBase*2)){
+            //      System.out.println("🩸 Ataque critico Dano de:" + dano+"!");
+            // }else if (dano > danoBase){
+            //     System.out.println("🩸 Dano padrão maior que o dano base, Dano de:" + dano+"!" );
+            // }
+
+            // alvo.setHp(alvo.getHp() - dano);
+            // vira \/
+            alvo.receberDano(dano);
+            NarradorDeCombate.narrarAtaque(this.getNome() + " (Crítico) " + alvo.getNome(), dano, alvo.getHp());
             }
            
             
@@ -232,7 +258,7 @@ class MonstroChefe extends Monstro {
     }
 
     @Override
-    public void atacar(Personagem alvo) {
+    public void atacar(Inimigo alvo) {
         System.out.println("\n 👹 " + this.getNome() + " ataca ferozmente " + alvo.getNome() + " com força de "
                 + this.getForca() + "!");
         super.atacar(alvo);
@@ -276,7 +302,7 @@ public class PraticaRPG {
                     break;
                 case 3:
                     System.out.println("\n🛡️​ " +heroi.getNome()+ " usou porção de cura!");
-                    heroi.usarPocao();
+                    heroi.usarItem(PocaoVida);
                     break;
                 case 4: 
                 if( heroi instanceof Mago){
