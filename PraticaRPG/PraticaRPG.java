@@ -10,12 +10,17 @@ interface Inimigo {
     int getHp();
     void receberDano(int dano);
     int calcularDanoAtaque();
+    void realizarAcao(Inimigo alvo);
 }
 
 class NarradorDeCombate{
     public static void narrarAtaque(String atacante,String alvo, int dano, int hpRestante){
         System.out.println("\n⚔️​  "+ atacante +" desferiu um ataque!");
         System.out.println("\n🩸​  "+ alvo + " perdeu " + dano + "de HP. (HP Restante: " +hpRestante+")");
+    }
+    public static void narrarAtaqueCritico(String atacante, String alvo, int dano, int hpRestante){
+        System.out.println("\n💥 ACERTO CRÍTICO! "+ atacante +" desferiu um golpe devastador!");
+        System.out.println("🩸  "+ alvo + " perdeu incríveis " + dano + " de HP. (HP Restante: " + hpRestante + ")");
     }
     public static void narrarCura(String nome, int cura, int hpAtual){
         System.out.println("\n🛡️​​  "+ nome +" usou um intem de cura!");
@@ -34,7 +39,7 @@ class PocaoVida implements Usavel {
     }
 }
 
-class Personagem {
+class Personagem implements Inimigo{
     private String nome;
     private int hp;
     private int hpMax; // limita o maximo de HP que o personagem pode ter
@@ -67,6 +72,7 @@ class Personagem {
 
     // setter
     // regra limita vida maximo e não permit
+
     public void setHp(int novoHp) {
         if (novoHp > hpMax) {
             this.hp = hpMax;
@@ -74,6 +80,38 @@ class Personagem {
             this.hp = 0;
         } else {
             this.hp = novoHp;
+        }
+    }
+
+    //implementar métodos obrigatorios do inimigo
+    @Override
+    public void receberDano(int dano){
+        this.setHp(this.getHp() - dano);
+    }
+    @Override
+    public int calcularDanoAtaque(){
+        return this.forca;
+    }
+    // logica de ataque inimigo
+    @Override
+    public void realizarAcao(Inimigo heroi){
+        Random rand = new Random();
+        // PRIORIDADED INIMIGO
+        // 1ª SOBREVIVER
+        if (this.getHp()< (this.getHpMax()*0.4)){
+            if (rand.nextInt(100)<50) {
+                System.out.println("\n O" +this.getNome()+ "Percebe que esta morrendo e usou uma cura ");
+                return;
+            }
+        }
+
+        int chanceAtaqueEspecial = rand.nextInt(100);
+        if (chanceAtaqueEspecial < 30){
+            int dano = this.getForca()*2;
+            heroi.receberDano(dano);
+            NarradorDeCombate.narrarAtaqueCritico(this.getNome(), heroi.getNome(), dano, heroi.getHp());
+        }else{
+            this.atacar(heroi);
         }
     }
 
@@ -113,7 +151,7 @@ class Mago extends Personagem {
                     + alvo.getNome() + "! Mana restante: " + this.mana);
             this.mana -= 5;
             int dano = this.getForca() + 5;
-            alvo.receberDano(dano);;
+            alvo.receberDano(dano);
             NarradorDeCombate.narrarAtaque(this.getNome(), 
                                             alvo.getNome(), 
                                             dano, 
@@ -131,12 +169,12 @@ class Mago extends Personagem {
         }
     }
 
-    public void usarMagiaFogo(Personagem alvo) {
+    public void usarMagiaFogo(Inimigo alvo) {
         if (this.mana >= 10) {
             System.out.println("\n" + this.getNome() + " lançou magia de fogo em " + alvo.getNome() + "!");
             this.mana -= 10;
             double danoMagico = this.getForca() * 1.5; // dano mágico é 1.5 vezes a força
-            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            alvo.receberDano((int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
         } else {
@@ -145,12 +183,12 @@ class Mago extends Personagem {
         }
     }
 
-    public void usarMagiaRaio(Personagem alvo) {
+    public void usarMagiaRaio(Inimigo alvo) {
         if (this.mana >= 35) {
             System.out.println("\n" + this.getNome() + " lançou magia de raio em " + alvo.getNome() + "!");
             this.mana -= 35;
             double danoMagico = this.getForca() * 2; // dano mágico é 1.5 vezes a força
-            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            alvo.receberDano((int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
         } else {
@@ -159,12 +197,12 @@ class Mago extends Personagem {
         }
     }
 
-    public void usarMagiaGelo(Personagem alvo) {
+    public void usarMagiaGelo(Inimigo alvo) {
         if (this.mana >= 20) {
             System.out.println("\n" + this.getNome() + " lançou magia de gelo em " + alvo.getNome() + "!");
             this.mana -= 20;
             double danoMagico = this.getForca() * 1.8; // dano mágico é 1.5 vezes a força
-            alvo.setHp(alvo.getHp() - (int) danoMagico);
+            alvo.receberDano((int) danoMagico);
             System.out.println("Dano Magico: " + (int) danoMagico +
                     " Mana restante: " + this.mana);
         } else {
@@ -228,16 +266,14 @@ public void atacar(Inimigo alvo){
             int bonus = rand.nextInt(41) + 10;
             int dano = danoBase + bonus;
             
-            // if(dano > (danoBase*2)){
-            //      System.out.println("🩸 Ataque critico Dano de:" + dano+"!");
-            // }else if (dano > danoBase){
-            //     System.out.println("🩸 Dano padrão maior que o dano base, Dano de:" + dano+"!" );
-            // }
+            if(dano > (danoBase*2)){
+                NarradorDeCombate.narrarAtaqueCritico(this.getNome(), alvo.getNome(),dano, alvo.getHp());
 
-            // alvo.setHp(alvo.getHp() - dano);
-            // vira \/
+            }else if (dano > danoBase){
+                NarradorDeCombate.narrarAtaque(this.getNome(), alvo.getNome(), dano, alvo.getHp());
+            }
             alvo.receberDano(dano);
-            NarradorDeCombate.narrarAtaque(this.getNome() + " (Crítico) " + alvo.getNome(), dano, alvo.getHp());
+            
             }
            
             
@@ -276,8 +312,7 @@ public class PraticaRPG {
         String nomeHeroi = leitor.nextLine();
 
         Personagem heroi = new Guerreiro(nomeHeroi, 150, 10);
-
-        MonstroChefe monstro = new MonstroChefe("Orc Zumbi chefe",150, 15);
+        Inimigo monstro = new Arqueiro("Orc arqueiro chefe",150, 15, 15, 10);
 
         System.out.println("\n Um "+monstro.getNome()+" apareceu! Prepare para a chibata!");
        
@@ -302,7 +337,7 @@ public class PraticaRPG {
                     break;
                 case 3:
                     System.out.println("\n🛡️​ " +heroi.getNome()+ " usou porção de cura!");
-                    heroi.usarItem(PocaoVida);
+                    heroi.usarItem(new PocaoVida());
                     break;
                 case 4: 
                 if( heroi instanceof Mago){
@@ -336,7 +371,7 @@ public class PraticaRPG {
             
             if (monstro.getHp() > 0){
                 System.out.println("\n--- TURNO DO INIMIGO ---");
-                monstro.atacar(heroi);
+                monstro.realizarAcao(heroi);
             }  
         }
         if (heroi.getHp() > 0){
